@@ -1,0 +1,40 @@
+- name: test the win_dns_client_feature module
+  hosts: all
+  gather_facts: false
+
+  roles:
+    - win_dns_client_feature
+
+  tasks:
+
+    - name: disable llmnr (check mode)
+      win_dns_client_feature:
+        enable_multi_cast: false
+      check_mode: yes
+      register: disable_check
+
+    - name: assert disable llmnr (check mode)
+      assert:
+        that:
+          - disable_check.changed
+
+    - name: disable llmnr
+      win_dns_client_feature:
+        enable_multi_cast: false
+      register: llmnr_disable
+
+    - name: assert llmnr disabled
+      assert:
+        that:
+          - llmnr_disable.changed
+
+    - name: test disable idempotence
+      win_netbios:
+        state: disabled
+      register: llmnr_disable
+
+    - name: test disable idempotence
+      assert:
+        that:
+          - not llmnr_disable.changed
+
