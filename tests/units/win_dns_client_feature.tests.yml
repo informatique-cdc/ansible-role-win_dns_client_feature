@@ -29,8 +29,8 @@
           - llmnr_disable.changed
 
     - name: test disable idempotence
-      win_netbios:
-        state: disabled
+      win_dns_client_feature:
+        enable_multi_cast: false
       register: llmnr_disable
 
     - name: test disable idempotence
